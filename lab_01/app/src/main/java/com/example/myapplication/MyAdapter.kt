@@ -24,7 +24,7 @@ class MyAdapter() : RecyclerView.Adapter<MyViewHolder>() {
     override fun onBindViewHolder(holder: MyViewHolder, position: Int)
     {
         holder.bind(items[position])
-        holder.setColorByNumber(items[position]);
+//        holder.setColorByNumber(items[position]);
 
     }
 

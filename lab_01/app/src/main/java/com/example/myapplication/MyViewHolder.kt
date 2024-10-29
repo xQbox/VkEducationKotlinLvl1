@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,6 +15,16 @@ class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     {
         text.text = "$number"
     }
+    fun setColorByNumber(number : Int)
+    {
+        if (number % 2 == 0)
+        {
+            image.setBackgroundColor(Color.RED)
+        }
+        else
+        {
+            image.setBackgroundColor(Color.BLUE)
+        }
 
-
+    }
 }

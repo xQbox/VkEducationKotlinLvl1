@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomView">
+        <attr name="layout_position" format="enum">
+            <enum name="odd" value="1"/>
+            <enum name="even" value="0"/>
+        </attr>
+    </declare-styleable>
+</resources>

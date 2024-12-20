@@ -2,6 +2,7 @@
 package com.example.myapp.com.example.myapplication
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,45 +41,107 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.myapp.DataRepository
 import com.example.myapplication.R
+import java.util.logging.Filter
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun MainScreen() {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xFF2C2C2C))
-    )
-    {
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top, // Элементы будут размещены сверху вниз
-            horizontalAlignment = Alignment.CenterHorizontally // Центрирование элементов по горизонтали
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF2C2C2C))
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
         ) {
-            shadowLayout()
-            Header() // Заголовок ниже логотипа
-            FilterAndSearch()
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f) // Занимает оставшееся пространство
-            ) {
-                MainScroll() // Обновляем функцию для поддержки прокрутки
+            // Прокручиваемая часть с Logo
+            item {
+                Logo()
             }
-//            MainScroll()
+
+            // StickyHeader для фиксированного Header
+            stickyHeader {
+                Header()
+                FilterAndSearch()
+            }
+            // Основной прокручиваемый контент
+            item {
+                MainScroll()
+            }
+            // StickyHeader для фиксированного Header
+//            stickyHeader {
+//                FilterAndSearch()
+//            }
         }
     }
 }
+//@Composable
+//fun MainScreen() {
+//    val scrollState = rememberScrollState() // Скролл состояние для всего контента
+//    Box(modifier = Modifier
+//        .fillMaxSize()
+//        .background(Color(0xFF2C2C2C))
+//    ) {
+//        // Nested Scroll API
+//        val lazyListState = rememberLazyListState()
+//
+//        // Создание всей структуры
+//        LazyColumn(
+//            state = lazyListState,
+//            modifier = Modifier.fillMaxSize()
+//        ) {
+//            // Верхние элементы (они будут двигаться вверх)
+//            item {
+//                Column(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Logo()
+//                    Header() // Заголовок ниже логотипа
+//                    FilterAndSearch()
+//                }
+//            }
+//            // Контент, который прокручивается ниже
+//            item {
+//                MainScroll() // Лента с альбомами
+//            }
+//        }
+//    }
+//}
 
-@Composable
-fun shadowLayout() {
-    Logo() // Логотип сверху
-}
+//@Composable
+//fun MainScreen() {
+//    Box(modifier = Modifier
+//        .fillMaxSize()
+//        .background(Color(0xFF2C2C2C))
+//    )
+//    {
+//
+//        Column(
+//            modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Top, // Элементы будут размещены сверху вниз
+//            horizontalAlignment = Alignment.CenterHorizontally // Центрирование элементов по горизонтали
+//        ) {
+//            shadowLayout()
+//            Header() // Заголовок ниже логотипа
+//            FilterAndSearch()
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .weight(1f) // Занимает оставшееся пространство
+//            ) {
+//                MainScroll() // Обновляем функцию для поддержки прокрутки
+//            }
+////            MainScroll()
+//        }
+//    }
+//}
+
 
 @Composable
 fun Logo() {
-//    val defaultSpaceWidthLogo = 55 && 45
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -152,7 +215,7 @@ fun FilterAndSearch() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp), // Added padding to the Row
+            .padding(horizontal = 8.dp, vertical = 8.dp), // Added padding to the Row
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Кнопка "Фильтр" with weight
@@ -205,43 +268,43 @@ fun FilterAndSearch() {
     }
 }
 
-@Composable
-fun MainScroll() {
-    // Добавляем прокрутку с помощью LazyColumn
-    LazyColumn(
-        modifier = Modifier
-            .background(Color(0xFF2C2C2C))
-            .fillMaxSize(), // Заполняем весь доступный размер
-        verticalArrangement = Arrangement.spacedBy(16.dp), // Добавляем отступы между элементами
-        contentPadding = PaddingValues(vertical = 16.dp) // Отступы сверху и снизу
-    ) {
-        // Первый раздел "Культовое"
-        item {
-            SectionHeader(title = "Культовое")
-        }
-        item {
-            AlbumRow(
-                albums = listOf(
-                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-                )
-            )
-        }
-
-        // Второй раздел "Выбор редакции"
-        item {
-            SectionHeader(title = "Выбор редакции")
-        }
-        item {
-            AlbumRow(
-                albums = listOf(
-                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-                )
-            )
-        }
-    }
-}
+//@Composable
+//fun MainScroll() {
+//    // Добавляем прокрутку с помощью LazyColumn
+//    LazyColumn(
+//        modifier = Modifier
+//            .background(Color(0xFF2C2C2C))
+//            .fillMaxSize(), // Заполняем весь доступный размер
+//        verticalArrangement = Arrangement.spacedBy(16.dp), // Добавляем отступы между элементами
+//        contentPadding = PaddingValues(vertical = 16.dp) // Отступы сверху и снизу
+//    ) {
+//        // Первый раздел "Культовое"
+//        item {
+//            SectionHeader(title = "Культовое")
+//        }
+//        item {
+//            AlbumRow(
+//                albums = listOf(
+//                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
+//                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
+//                )
+//            )
+//        }
+//
+//        // Второй раздел "Выбор редакции"
+//        item {
+//            SectionHeader(title = "Выбор редакции")
+//        }
+//        item {
+//            AlbumRow(
+//                albums = listOf(
+//                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
+//                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
+//                )
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun SectionHeader(title: String) {
@@ -263,74 +326,102 @@ fun SectionHeader(title: String) {
     }
 }
 
-//@Composable
-//fun MainScroll() {
-//    Column(
-//        modifier = Modifier
-//            .background(Color(0xFF2C2C2C))
-//            .fillMaxSize(),
-//    ) {
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth(), // Растянуть Row на всю ширину
-//            horizontalArrangement = Arrangement.Center // Разместить содержимое по центру горизонтально
-//        ) {
-//            Text(
-//                text = "Культовое",
-//                color = Color.White,
-//                fontSize = 20.sp,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier
-//                    .padding(vertical = 16.dp), // Отступы сверху и снизу
-//                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
-//                style = MaterialTheme.typography.bodyLarge
-//            )
-//        }
-//        Spacer(modifier = Modifier.height(16.dp))
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//        )
-//        {
-//            AlbumRow(
-//                albums = listOf(
-//                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-//                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-//            )
-//            )
-//        }
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth(), // Растянуть Row на всю ширину
-//            horizontalArrangement = Arrangement.Center // Разместить содержимое по центру горизонтально
-//        ) {
-//            Text(
-//                text = "Выбор редакции",
-//                color = Color.White,
-//                fontSize = 20.sp,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier
-//                    .padding(vertical = 16.dp), // Отступы сверху и снизу
-//                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
-//                style = MaterialTheme.typography.bodyLarge
-//            )
-//        }
-//        Spacer(modifier = Modifier.height(16.dp))
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//        )
-//        {
-//            AlbumRow(
-//                albums = listOf(
-//                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-//                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-//                )
-//            )
-//        }
-//
-//    }
-//}
+@Composable
+fun MainScroll() {
+    Column(
+        modifier = Modifier
+            .background(Color(0xFF2C2C2C))
+            .fillMaxSize(),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(), // Растянуть Row на всю ширину
+            horizontalArrangement = Arrangement.Center // Разместить содержимое по центру горизонтально
+        ) {
+            Text(
+                text = "Культовое",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(vertical = 16.dp), // Отступы сверху и снизу
+                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+        )
+        {
+            AlbumRow(
+                albums = listOf(
+                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
+                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
+            )
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(), // Растянуть Row на всю ширину
+            horizontalArrangement = Arrangement.Center // Разместить содержимое по центру горизонтально
+        ) {
+            Text(
+                text = "Выбор редакции",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(vertical = 16.dp), // Отступы сверху и снизу
+                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+        )
+        {
+            AlbumRow(
+                albums = listOf(
+                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
+                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
+                )
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(), // Растянуть Row на всю ширину
+            horizontalArrangement = Arrangement.Center // Разместить содержимое по центру горизонтально
+        ) {
+            Text(
+                text = "Выбор редакции",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(vertical = 16.dp), // Отступы сверху и снизу
+                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+        )
+        {
+            AlbumRow(
+                albums = listOf(
+                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
+                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
+                )
+            )
+        }
+    }
+}
 
 @Composable
 fun AlbumRow(albums: List<Album>) {

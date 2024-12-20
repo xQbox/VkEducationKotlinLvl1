@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -46,7 +47,7 @@ import java.util.logging.Filter
 
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview
+//@Preview
 @Composable
 fun MainScreen() {
     Box(
@@ -143,6 +144,7 @@ fun Header() {
         ) { Text("Категории") }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterAndSearch() {
@@ -153,12 +155,11 @@ fun FilterAndSearch() {
             .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Кнопка "Фильтр" with weight
         Button(
             onClick = { /* Фильтр */ },
             modifier = Modifier
                 .height(48.dp)
-                .weight(0.3f), // Assign weight to the Button
+                .weight(0.3f),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
@@ -174,7 +175,6 @@ fun FilterAndSearch() {
             )
         }
         Spacer(modifier = Modifier.width(4.dp))
-        // Поле ввода с иконкой with weight
         TextField(
             value = "",
             onValueChange = { /* Обработка ввода */ },
@@ -201,64 +201,6 @@ fun FilterAndSearch() {
     }
 }
 
-//@Composable
-//fun MainScroll() {
-//    // Добавляем прокрутку с помощью LazyColumn
-//    LazyColumn(
-//        modifier = Modifier
-//            .background(Color(0xFF2C2C2C))
-//            .fillMaxSize(), // Заполняем весь доступный размер
-//        verticalArrangement = Arrangement.spacedBy(16.dp), // Добавляем отступы между элементами
-//        contentPadding = PaddingValues(vertical = 16.dp) // Отступы сверху и снизу
-//    ) {
-//        // Первый раздел "Культовое"
-//        item {
-//            SectionHeader(title = "Культовое")
-//        }
-//        item {
-//            AlbumRow(
-//                albums = listOf(
-//                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-//                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-//                )
-//            )
-//        }
-//
-//        // Второй раздел "Выбор редакции"
-//        item {
-//            SectionHeader(title = "Выбор редакции")
-//        }
-//        item {
-//            AlbumRow(
-//                albums = listOf(
-//                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-//                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-//                )
-//            )
-//        }
-//    }
-//}
-
-@Composable
-fun SectionHeader(title: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = title,
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(vertical = 16.dp),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
-}
-
 @Composable
 fun MainScroll() {
     Column(
@@ -266,10 +208,12 @@ fun MainScroll() {
             .background(Color(0xFF2C2C2C))
             .fillMaxSize(),
     ) {
-        Row(
+        // catalogHeader
+        Box(
             modifier = Modifier
-                .fillMaxWidth(), // Растянуть Row на всю ширину
-            horizontalArrangement = Arrangement.Center // Разместить содержимое по центру горизонтально
+                .padding(bottom = 8.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "Культовое",
@@ -277,41 +221,12 @@ fun MainScroll() {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(vertical = 16.dp), // Отступы сверху и снизу
-                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
+                    .padding(vertical = 16.dp),
+                textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-        )
-        {
-            AlbumRow(
-                albums = listOf(
-                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-            )
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(), // Растянуть Row на всю ширину
-            horizontalArrangement = Arrangement.Center // Разместить содержимое по центру горизонтально
-        ) {
-            Text(
-                text = "Выбор редакции",
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(vertical = 16.dp), // Отступы сверху и снизу
-                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -324,9 +239,40 @@ fun MainScroll() {
                 )
             )
         }
+        // catalogHeader
+        Box(
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Выбор редакции",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(vertical = 16.dp), // Отступы сверху и снизу
+                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+
         Row(
             modifier = Modifier
-                .fillMaxWidth(), // Растянуть Row на всю ширину
+                .fillMaxWidth(),
+        )
+        {
+//            AlbumRow(
+//                albums = listOf(
+//                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
+//                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
+//                )
+//            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center // Разместить содержимое по центру горизонтально
         ) {
             Text(
@@ -376,6 +322,7 @@ fun AlbumRow(albums: List<Album>) {
     }
 }
 
+@Preview
 @Composable
 fun ProductBox() {
     val configuration = LocalConfiguration.current
@@ -387,15 +334,15 @@ fun ProductBox() {
     } else {
         200.dp
     }
-
-    Column(
-        modifier = Modifier
-            .background(Color(0xFF333333))
-    ) {
+//    Column(
+//        modifier = Modifier
+//            .background(Color(0xFF333333))
+//    ) {
         Box(
             modifier = Modifier
-                .weight(1f)
+                .fillMaxSize()
                 .aspectRatio(1f)
+                .clip(RoundedCornerShape(16.dp))
                 .background(Color.White, shape = RoundedCornerShape(8.dp))
         ) {
             Image(
@@ -406,7 +353,6 @@ fun ProductBox() {
                     .align(Alignment.Center), // Выравнивание по центру
                 contentScale = ContentScale.Crop
             )
-
             IconButton(
                 onClick = {
                     // Логика добавления в корзину
@@ -421,31 +367,29 @@ fun ProductBox() {
                     tint = Color.White
                 )
             }
-        }
-
-        Box(
-            modifier = Modifier.background(Color(0xFFFF6A00), shape = RoundedCornerShape(12.dp)),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Column {
-                Text(text = "AC/DC (ost 'Iron Man 2')", color = Color.White, fontSize = 16.sp)
-                Text(
-                    text = "Жанр: блоз-рок, хард-рок",
-                    color = Color.White.copy(alpha = 0.7f),
-                    fontSize = 12.sp
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "5400 ₽", color = Color.White, fontSize = 14.sp)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Товаров в наличии: 152",
-                    color = Color.White,
-                    fontSize = 12.sp
-                )
-            }
-        }
+//        }
+//        Box(
+//            modifier = Modifier.background(Color(0xFFFF6A00), shape = RoundedCornerShape(12.dp)),
+//            contentAlignment = Alignment.CenterStart
+//        ) {
+//            Column {
+//                Text(text = "AC/DC (ost 'Iron Man 2')", color = Color.White, fontSize = 16.sp)
+//                Text(
+//                    text = "Жанр: блоз-рок, хард-рок",
+//                    color = Color.White.copy(alpha = 0.7f),
+//                    fontSize = 12.sp
+//                )
+//                Spacer(modifier = Modifier.height(4.dp))
+//                Text(text = "5400 ₽", color = Color.White, fontSize = 14.sp)
+//                Spacer(modifier = Modifier.height(4.dp))
+//                Text(
+//                    text = "Товаров в наличии: 152",
+//                    color = Color.White,
+//                    fontSize = 12.sp
+//                )
+//            }
+//        }
     }
-
 }
 
 

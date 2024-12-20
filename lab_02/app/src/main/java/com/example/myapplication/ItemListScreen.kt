@@ -1,6 +1,7 @@
 // ItemsListScreen.kt
 package com.example.myapp.com.example.myapplication
 
+import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -56,88 +57,19 @@ fun MainScreen() {
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Прокручиваемая часть с Logo
             item {
                 Logo()
             }
-
-            // StickyHeader для фиксированного Header
             stickyHeader {
                 Header()
                 FilterAndSearch()
             }
-            // Основной прокручиваемый контент
             item {
                 MainScroll()
             }
-            // StickyHeader для фиксированного Header
-//            stickyHeader {
-//                FilterAndSearch()
-//            }
         }
     }
 }
-//@Composable
-//fun MainScreen() {
-//    val scrollState = rememberScrollState() // Скролл состояние для всего контента
-//    Box(modifier = Modifier
-//        .fillMaxSize()
-//        .background(Color(0xFF2C2C2C))
-//    ) {
-//        // Nested Scroll API
-//        val lazyListState = rememberLazyListState()
-//
-//        // Создание всей структуры
-//        LazyColumn(
-//            state = lazyListState,
-//            modifier = Modifier.fillMaxSize()
-//        ) {
-//            // Верхние элементы (они будут двигаться вверх)
-//            item {
-//                Column(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    Logo()
-//                    Header() // Заголовок ниже логотипа
-//                    FilterAndSearch()
-//                }
-//            }
-//            // Контент, который прокручивается ниже
-//            item {
-//                MainScroll() // Лента с альбомами
-//            }
-//        }
-//    }
-//}
-
-//@Composable
-//fun MainScreen() {
-//    Box(modifier = Modifier
-//        .fillMaxSize()
-//        .background(Color(0xFF2C2C2C))
-//    )
-//    {
-//
-//        Column(
-//            modifier = Modifier.fillMaxSize(),
-//            verticalArrangement = Arrangement.Top, // Элементы будут размещены сверху вниз
-//            horizontalAlignment = Alignment.CenterHorizontally // Центрирование элементов по горизонтали
-//        ) {
-//            shadowLayout()
-//            Header() // Заголовок ниже логотипа
-//            FilterAndSearch()
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .weight(1f) // Занимает оставшееся пространство
-//            ) {
-//                MainScroll() // Обновляем функцию для поддержки прокрутки
-//            }
-////            MainScroll()
-//        }
-//    }
-//}
 
 
 @Composable
@@ -177,9 +109,11 @@ fun Logo() {
 fun Header() {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(Color(0xFF2C2C2C)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly // Равномерное распределение кнопок
+
     ) {
         Button(
             shape = RoundedCornerShape(8.dp),
@@ -188,7 +122,7 @@ fun Header() {
                 containerColor = Color(0xFFFF6A00),
                 contentColor = Color.White
             ),
-        ) { Text("Собрания") }
+        ) { Text("Сборники") }
 
         Button(
             shape = RoundedCornerShape(8.dp),
@@ -215,7 +149,8 @@ fun FilterAndSearch() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 8.dp), // Added padding to the Row
+            .background(Color(0xFF2C2C2C))
+            .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Кнопка "Фильтр" with weight
@@ -238,9 +173,7 @@ fun FilterAndSearch() {
                 modifier = Modifier.size(16.dp)
             )
         }
-
-        Spacer(modifier = Modifier.width(4.dp)) // Adjust spacer as needed
-
+        Spacer(modifier = Modifier.width(4.dp))
         // Поле ввода с иконкой with weight
         TextField(
             value = "",
@@ -407,7 +340,6 @@ fun MainScroll() {
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -438,7 +370,7 @@ fun AlbumRow(albums: List<Album>) {
                     .background(Color.LightGray), // Фон для наглядности
                 contentAlignment = Alignment.Center // Выравнивание содержимого
             ) {
-                Text(text = "Album", color = Color.White) // Пример содержимого Box
+                ProductBox()
             }
         }
     }
@@ -450,7 +382,6 @@ fun ProductBox() {
     val screenWidth = configuration.screenWidthDp.dp
     val context = LocalContext.current
 
-    // Определяем размеры в зависимости от платформы
     val boxSize = if (screenWidth < 600.dp) {
         150.dp
     } else {
@@ -463,13 +394,16 @@ fun ProductBox() {
     ) {
         Box(
             modifier = Modifier
-                .size(boxSize)
+                .weight(1f)
+                .aspectRatio(1f)
                 .background(Color.White, shape = RoundedCornerShape(8.dp))
         ) {
             Image(
                 painter = AssetImagePainter("3.png"),
                 contentDescription = "AlbumCover",
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center), // Выравнивание по центру
                 contentScale = ContentScale.Crop
             )
 
@@ -492,7 +426,6 @@ fun ProductBox() {
         Box(
             modifier = Modifier.background(Color(0xFFFF6A00), shape = RoundedCornerShape(12.dp)),
             contentAlignment = Alignment.CenterStart
-
         ) {
             Column {
                 Text(text = "AC/DC (ost 'Iron Man 2')", color = Color.White, fontSize = 16.sp)
@@ -512,26 +445,10 @@ fun ProductBox() {
             }
         }
     }
+
 }
 
-@Composable
-fun AlbumCard(album: Album) {
-    Column(
-        modifier = Modifier
-            .padding(8.dp)
-            .background(Color(0xFFFF6A00), shape = RoundedCornerShape(8.dp))
-            .padding(8.dp)
-            .width(150.dp)
-    ) {
-        // Mock image
-        Box(modifier = Modifier.height(100.dp).background(Color.Gray))
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = album.title, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-        Text(text = "Жанр: ${album.genre}", color = Color.White, fontSize = 10.sp)
-        Text(text = "${album.price}₽", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-        Text(text = "Товаров в наличии: ${album.stock}", color = Color.White, fontSize = 10.sp)
-    }
-}
+
 
 data class Album(val title: String, val genre: String, val price: Int, val stock: Int)
 
@@ -628,8 +545,6 @@ fun ItemRow(item: Item, onClick: () -> Unit) {
         }
     }
 }
-
-
 
 @Composable
 fun AssetImagePainter(imageFileName: String): Painter {

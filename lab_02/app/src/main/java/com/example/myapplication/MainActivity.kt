@@ -1,6 +1,7 @@
 // MainActivity.kt
 package com.example.myapplication
 
+import MyApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.example.myapplication.screen.screenExtenderdata
-import com.example.myapplication.ui.theme.MyApp
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {

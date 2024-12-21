@@ -10,8 +10,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
-import com.example.myapp.com.example.myapplication.LoadingIndicator
-
 
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable

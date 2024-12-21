@@ -1,5 +1,4 @@
-package com.example.myapplication
-import androidx.annotation.DrawableRes
+package com.example.myapplication.frontendPart
 
 data class Item(
     val id: Int,

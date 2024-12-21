@@ -1,7 +1,26 @@
 // ItemsListScreen.kt
 package com.example.myapp.com.example.myapplication
 
-import android.widget.Space
+//// ItemsListScreen.kt
+//package com.example.myapp.com.example.myapplication
+//
+//import androidx.compose.foundation.clickable
+//import androidx.compose.foundation.layout.*
+//import androidx.compose.foundation.lazy.*
+//import androidx.compose.material3.*
+//import androidx.compose.runtime.*
+//import androidx.compose.ui.Modifier
+//import androidx.compose.ui.unit.dp
+//import androidx.navigation.NavController
+//import androidx.compose.ui.Alignment
+//import androidx.compose.ui.platform.LocalContext
+//import androidx.compose.ui.res.painterResource
+//import com.example.myapplication.FrontEndPart.Item
+//import coil.compose.AsyncImage
+//import com.example.myapplication.FrontEndPart.DataRepository
+//
+//
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -12,14 +31,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -32,46 +46,15 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.Item
+import com.example.myapplication.frontendPart.Item
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import com.example.myapp.DataRepository
-import com.example.myapplication.R
-import java.util.logging.Filter
-
-
-@OptIn(ExperimentalFoundationApi::class)
-//@Preview
-@Composable
-fun MainScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF2C2C2C))
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            item {
-                Logo()
-            }
-            stickyHeader {
-                Header()
-                FilterAndSearch()
-            }
-            item {
-                MainScroll()
-            }
-        }
-    }
-}
-
+import com.example.myapplication.frontendPart.DataRepository
 
 @Composable
 fun Logo() {
@@ -263,12 +246,12 @@ fun MainScroll() {
                 .fillMaxWidth(),
         )
         {
-//            AlbumRow(
-//                albums = listOf(
-//                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-//                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-//                )
-//            )
+            AlbumRow(
+                albums = listOf(
+                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
+                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
+                )
+            )
         }
         Row(
             modifier = Modifier
@@ -309,49 +292,43 @@ fun AlbumRow(albums: List<Album>) {
             .horizontalScroll(rememberScrollState()), // Добавляем горизонтальную прокрутку
         horizontalArrangement = Arrangement.spacedBy(8.dp) // Расстояние между элементами
     ) {
-        albums.forEach { album ->
-            Box(
-                modifier = Modifier
-                    .size(200.dp) // Задаем размер для Box
-                    .background(Color.LightGray), // Фон для наглядности
-                contentAlignment = Alignment.Center // Выравнивание содержимого
-            ) {
                 ProductBox()
-            }
-        }
+                ProductBox()
+                ProductBox()
+                ProductBox()
     }
 }
-
 @Preview
 @Composable
 fun ProductBox() {
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val context = LocalContext.current
+    val screenWidth = configuration.screenWidthDp.dp // Ширина экрана в dp
+    val buttonSize = if (screenWidth < 600.dp) 40.dp else 60.dp
 
-    val boxSize = if (screenWidth < 600.dp) {
-        150.dp
-    } else {
-        200.dp
-    }
-//    Column(
-//        modifier = Modifier
-//            .background(Color(0xFF333333))
-//    ) {
+    Column(
+        modifier = Modifier
+            .padding(4.dp)
+            .width(200.dp) // Занимаем всю ширину
+            .height(300.dp) // Ограничиваем высоту
+    ) {
+        // Первый Box (0.8f пространства)
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(16.dp))
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                .fillMaxWidth()
+                .weight(0.8f) // 80% пространства
+                .aspectRatio(1f) // Квадратный Box
+                .background(Color.Black)
+                .padding(bottom = 4.dp)
         ) {
             Image(
                 painter = AssetImagePainter("3.png"),
                 contentDescription = "AlbumCover",
                 modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.Center), // Выравнивание по центру
-                contentScale = ContentScale.Crop
+                    .fillMaxSize(0.8f)
+                    .align(Alignment.Center)
+                    .clip(RoundedCornerShape(15))
+                    .background(Color.White),
+                contentScale = ContentScale.Crop // Масштабирование изображения
             )
             IconButton(
                 onClick = {
@@ -359,36 +336,71 @@ fun ProductBox() {
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .background(Color.Black, shape = RoundedCornerShape(50))
+                    .size(buttonSize) // Размер кнопки
+                    .offset(x = (-10).dp, y = (-10).dp) // Смещение кнопки
+                    .background(Color.Yellow) // Круглый фон
             ) {
                 Icon(
                     painter = AssetImagePainter("1.png"),
-                    contentDescription = "AddtoCart",
+                    contentDescription = "Add to Cart",
                     tint = Color.White
                 )
             }
-//        }
-//        Box(
-//            modifier = Modifier.background(Color(0xFFFF6A00), shape = RoundedCornerShape(12.dp)),
-//            contentAlignment = Alignment.CenterStart
-//        ) {
-//            Column {
-//                Text(text = "AC/DC (ost 'Iron Man 2')", color = Color.White, fontSize = 16.sp)
-//                Text(
-//                    text = "Жанр: блоз-рок, хард-рок",
-//                    color = Color.White.copy(alpha = 0.7f),
-//                    fontSize = 12.sp
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//                Text(text = "5400 ₽", color = Color.White, fontSize = 14.sp)
-//                Spacer(modifier = Modifier.height(4.dp))
-//                Text(
-//                    text = "Товаров в наличии: 152",
-//                    color = Color.White,
-//                    fontSize = 12.sp
-//                )
-//            }
-//        }
+        }
+
+        // Второй Box (0.2f пространства)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.2f) // 20% пространства
+                .clip(RoundedCornerShape(13))
+                .background(Color(0xFFFF6A00))
+        ) {
+            Column(modifier = Modifier.padding(8.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Eminem - \"Street Rap\"",
+                        color = Color.White,
+                        fontSize = 8.sp,
+                        modifier = Modifier.weight(1f),
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = "5400 ₽",
+                        color = Color.White,
+                        fontSize = 8.sp,
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                    )
+                }
+                Text(
+                    text = "Жанр: блоз-рок, хард-рок",
+                    color = Color.White,
+                    fontSize = 7.sp,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Товаров в наличии:",
+                        color = Color.White,
+                        fontSize = 8.sp,
+                        modifier = Modifier.weight(1f),
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = "15",
+                        color = Color.White,
+                        fontSize = 8.sp,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -396,25 +408,7 @@ fun ProductBox() {
 
 data class Album(val title: String, val genre: String, val price: Int, val stock: Int)
 
-//// ItemsListScreen.kt
-//package com.example.myapp.com.example.myapplication
-//
-//import androidx.compose.foundation.clickable
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.foundation.lazy.*
-//import androidx.compose.material3.*
-//import androidx.compose.runtime.*
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.unit.dp
-//import androidx.navigation.NavController
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.platform.LocalContext
-//import androidx.compose.ui.res.painterResource
-//import com.example.myapplication.Item
-//import coil.compose.AsyncImage
-//import com.example.myapp.DataRepository
-//
-//
+
 @Composable
 fun ItemsListScreen(navController: NavController) {
     val context = LocalContext.current

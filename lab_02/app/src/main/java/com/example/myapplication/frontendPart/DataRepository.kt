@@ -1,10 +1,8 @@
 // DataRepository.kt
-package com.example.myapp
+package com.example.myapplication.frontendPart
 
 import android.content.Context
 import android.util.Log
-import com.example.myapplication.Item
-import com.example.myapplication.R
 import kotlinx.coroutines.delay
 import java.io.File
 import java.io.FileNotFoundException

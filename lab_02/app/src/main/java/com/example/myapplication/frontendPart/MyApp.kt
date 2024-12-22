@@ -1,9 +1,11 @@
+import android.widget.ImageButton
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -50,7 +53,7 @@ fun MyApp(modifier: Modifier, screenState : screenExtenderdata) {
             FilterAndSearch()
         }
         item {
-            MainScroll()
+            ScrollElement()
         }
     }
 }
@@ -183,7 +186,7 @@ fun FilterAndSearch() {
 }
 
 @Composable
-fun MainScroll() {
+fun ScrollElement() {
     Column(
         modifier = Modifier
             .background(Color(0xFF2C2C2C))
@@ -207,7 +210,6 @@ fun MainScroll() {
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -296,106 +298,108 @@ fun AlbumRow(albums: List<Album>) {
     }
 }
 
-//@Preview
 @Composable
 fun ProductBox() {
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp // Ширина экрана в dp
-    val buttonSize = if (screenWidth < 600.dp) 40.dp else 60.dp
+    val screenWidth = configuration.screenWidthDp.dp
+    val buttonSize = if (screenWidth < 600.dp) 30.dp else 40.dp
 
     Column(
         modifier = Modifier
-            .padding(4.dp)
-            .width(200.dp) // Занимаем всю ширину
-            .height(300.dp) // Ограничиваем высоту
+            .width(200.dp)
+            .height(300.dp)
     ) {
-        // Первый Box (0.8f пространства)
         Box(
             modifier = Modifier
+                .aspectRatio(1f)
                 .fillMaxWidth()
-                .weight(0.8f) // 80% пространства
-                .aspectRatio(1f) // Квадратный Box
-                .padding(bottom = 4.dp)
         ) {
             Image(
                 painter = AssetImagePainter("3.png"),
                 contentDescription = "AlbumCover",
                 modifier = Modifier
-                    .fillMaxSize(0.8f)
+                    .fillMaxSize(0.93f)
                     .align(Alignment.Center)
                     .clip(RoundedCornerShape(15))
                     .background(Color.White),
                 contentScale = ContentScale.Crop // Масштабирование изображения
             )
-            IconButton(
-                onClick = {
-                    // Логика добавления в корзину
-                },
+            Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .size(buttonSize) // Размер кнопки
-                    .offset(x = (-10).dp, y = (-10).dp) // Смещение кнопки
-                    .background(Color.Yellow) // Круглый фон
+                    .size(buttonSize)
+                    .offset(y = (-30).dp)
+                    .background(Color.Yellow)
+                    .clickable(
+                        onClick = {
+                            // Логика добавления в корзину
+                        },
+                        indication = rememberRipple(bounded = false),
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
             ) {
-                Icon(
-                    painter = AssetImagePainter("1.png"),
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
                     contentDescription = "Add to Cart",
-                    tint = Color.White
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }
-
-        // Второй Box (0.2f пространства)
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.2f) // 20% пространства
                 .clip(RoundedCornerShape(13))
                 .background(Color(0xFFFF6A00))
+                .padding(horizontal = 8.dp, vertical = 8.dp)
         ) {
-            Column(modifier = Modifier.padding(8.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Eminem - \"Street Rap\"",
-                        color = Color.White,
-                        fontSize = 8.sp,
-                        modifier = Modifier.weight(1f),
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = "5400 ₽",
-                        color = Color.White,
-                        fontSize = 8.sp,
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                    )
-                }
+            // Первая строка с двумя текстами
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(
-                    text = "Жанр: блоз-рок, хард-рок",
+                    text = "Eminem - \"Street Rap\"",
                     color = Color.White,
-                    fontSize = 7.sp,
+                    fontSize = 10.sp,
+                    lineHeight = 10.sp,
+                    style = MaterialTheme.typography.titleMedium,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Товаров в наличии:",
-                        color = Color.White,
-                        fontSize = 8.sp,
-                        modifier = Modifier.weight(1f),
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = "15",
-                        color = Color.White,
-                        fontSize = 8.sp,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                }
+                Text(
+                    text = "5400 ₽",
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    lineHeight = 10.sp,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            Text(
+                text = "Жанр: блоз-рок, хард-рок",
+                color = Color.White.copy(alpha = 0.8f),
+                lineHeight = 10.sp,
+                fontSize = 10.sp,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.align(Alignment.Start)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            // Третья строка с двумя текстами
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Товаров в наличии:",
+                    color = Color.White,
+                    lineHeight = 10.sp,
+                    fontSize = 10.sp,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = "15",
+                    color = Color.White,
+                    lineHeight = 10.sp,
+                    fontSize = 10.sp,
+                )
             }
         }
     }

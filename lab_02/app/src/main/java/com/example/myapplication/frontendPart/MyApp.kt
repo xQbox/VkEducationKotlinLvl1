@@ -12,6 +12,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
@@ -35,25 +37,95 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.frontendPart.Item
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.example.myapplication.ElementData.ElementData
 import com.example.myapplication.R
 import com.example.myapplication.frontendPart.DataRepository
 import com.example.myapplication.screen.screenExtenderdata
 
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MyApp(modifier: Modifier, screenState : screenExtenderdata) {
-    LazyColumn(
-        modifier = modifier
+    val cultSectionData = listOf(
+        ElementData(
+            imageFileName = "2.jpg",
+            artistName = "Pink Floyd",
+            price = 19.99,
+            genre = "Progressive Rock",
+            quantityInStock = 10
+        ),
+        ElementData(
+            imageFileName = "3.png",
+            artistName = "The Beatles",
+            price = 22.50,
+            genre = "Rock",
+            quantityInStock = 8
+        ),
+        ElementData(
+            imageFileName = "4.jpg",
+            artistName = "Michael Jackson",
+            price = 18.99,
+            genre = "Pop",
+            quantityInStock = 12
+        ),
+        ElementData(
+            imageFileName = "5.jpg",
+            artistName = "Nirvana",
+            price = 20.00,
+            genre = "Grunge",
+            quantityInStock = 15
+        ),
+        ElementData(
+            imageFileName = "6.jpg",
+            artistName = "AC/DC",
+            price = 21.99,
+            genre = "Hard Rock",
+            quantityInStock = 5
+        )
+    )
+
+
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        item {
-            Logo()
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item {
+                Logo()
+            }
+            stickyHeader {
+                Header()
+                FilterAndSearch()
+            }
+            item {
+                ScrollElement("Культовое", cultSectionData)
+                ScrollElement("Выбор Редакции", cultSectionData)
+                ScrollElement("Невероятно культовое", cultSectionData)
+            }
         }
-        stickyHeader {
-            Header()
-            FilterAndSearch()
+    }
+}
+
+
+
+@Composable
+fun BottomNavigationBar() {
+    // Пример простой навигации
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Gray),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        TextButton(onClick = { /* Навигация на главный экран */ }) {
+            Text(text = "Главная", color = Color.White)
         }
-        item {
-            ScrollElement()
+        TextButton(onClick = { /* Навигация на поиск */ }) {
+            Text(text = "Поиск", color = Color.White)
+        }
+        TextButton(onClick = { /* Навигация на профиль */ }) {
+            Text(text = "Профиль", color = Color.White)
         }
     }
 }
@@ -186,7 +258,7 @@ fun FilterAndSearch() {
 }
 
 @Composable
-fun ScrollElement() {
+fun ScrollElement(sectionTitle: String, elements: List<ElementData>) {
     Column(
         modifier = Modifier
             .background(Color(0xFF2C2C2C))
@@ -200,7 +272,7 @@ fun ScrollElement() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Культовое",
+                text = sectionTitle,
                 color = Color.White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
@@ -212,97 +284,24 @@ fun ScrollElement() {
         }
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
-        )
-        {
-            AlbumRow(
-                albums = listOf(
-                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-                )
-            )
-        }
-        // catalogHeader
-        Box(
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()), // Добавляем горизонтальную прокрутку
+            horizontalArrangement = Arrangement.spacedBy(8.dp) // Расстояние между элементами
         ) {
-            Text(
-                text = "Выбор редакции",
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(vertical = 16.dp), // Отступы сверху и снизу
-                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-        )
-        {
-            AlbumRow(
-                albums = listOf(
-                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-                )
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center // Разместить содержимое по центру горизонтально
-        ) {
-            Text(
-                text = "Выбор редакции",
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(vertical = 16.dp), // Отступы сверху и снизу
-                textAlign = TextAlign.Center, // Центрирует текст внутри элемента Text
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-        )
-        {
-            AlbumRow(
-                albums = listOf(
-                    Album("AC/DC (ост \"Iron Man 2\")", "Блюз-рок, хард-рок", 5400, 152),
-                    Album("Royal Blood — \"How Did We Get So Dark?\"", "гаражный рок, альтернативный рок", 2200, 0)
-                )
-            )
+            elements.forEach()
+            {
+                element->ProductBox(element)
+            }
         }
     }
 }
 
 @Composable
-fun AlbumRow(albums: List<Album>) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState()), // Добавляем горизонтальную прокрутку
-        horizontalArrangement = Arrangement.spacedBy(8.dp) // Расстояние между элементами
-    ) {
-        ProductBox()
-        ProductBox()
-        ProductBox()
-        ProductBox()
-    }
-}
-
-@Composable
-fun ProductBox() {
+fun ProductBox(elementData: ElementData) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val buttonSize = if (screenWidth < 600.dp) 30.dp else 40.dp
+    val (imageName, artistName, price, genre, stockCount) = elementData
 
     Column(
         modifier = Modifier
@@ -313,9 +312,16 @@ fun ProductBox() {
             modifier = Modifier
                 .aspectRatio(1f)
                 .fillMaxWidth()
+                .clickable(
+                    onClick = {
+                        // Логика нажатия
+                    },
+                    indication = rememberRipple(bounded = false),
+                    interactionSource = remember { MutableInteractionSource() }
+                )
         ) {
             Image(
-                painter = AssetImagePainter("3.png"),
+                painter = AssetImagePainter(imageName),
                 contentDescription = "AlbumCover",
                 modifier = Modifier
                     .fillMaxSize(0.93f)
@@ -358,7 +364,7 @@ fun ProductBox() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Eminem - \"Street Rap\"",
+                    text = artistName,
                     color = Color.White,
                     fontSize = 10.sp,
                     lineHeight = 10.sp,
@@ -366,7 +372,7 @@ fun ProductBox() {
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = "5400 ₽",
+                    text = price.toString(),
                     color = Color.White,
                     fontSize = 10.sp,
                     lineHeight = 10.sp,
@@ -374,7 +380,7 @@ fun ProductBox() {
                 )
             }
             Text(
-                text = "Жанр: блоз-рок, хард-рок",
+                text = genre,
                 color = Color.White.copy(alpha = 0.8f),
                 lineHeight = 10.sp,
                 fontSize = 10.sp,
@@ -395,7 +401,7 @@ fun ProductBox() {
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = "15",
+                    text = stockCount.toString(),
                     color = Color.White,
                     lineHeight = 10.sp,
                     fontSize = 10.sp,

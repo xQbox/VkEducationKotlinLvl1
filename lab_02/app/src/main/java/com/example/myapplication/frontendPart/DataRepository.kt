@@ -69,7 +69,6 @@ object DataRepository {
                         input.copyTo(output)
                     }
                 }
-
                 Log.d("DataRepository", "Изображение ${assetName.substringAfterLast('/')} скопировано.")
             } catch (e: FileNotFoundException) {
                 Log.e("DataRepository", "Файл $assetName не найден в assets", e)

@@ -1,6 +1,7 @@
 // MainActivity.kt
 package com.example.myapplication
 
+import BottomNavigationBar
 import MyApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,7 +18,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme() {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = { BottomNavigationBar() }
+                ) { innerPadding ->
                     MyApp(
                         modifier = Modifier.padding(innerPadding),
                         screenState = screenExtenderdata()

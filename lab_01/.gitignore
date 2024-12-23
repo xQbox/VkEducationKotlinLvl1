@@ -12,4 +12,9 @@
 /captures
 .externalNativeBuild
 .cxx
+.idea/
+.kotlin/
+.gradle/
+.captures/
+.build/
 local.properties

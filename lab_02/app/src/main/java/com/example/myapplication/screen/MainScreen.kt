@@ -1,9 +1,33 @@
-import android.widget.ImageButton
+package com.example.myapplication.screen
+
+import android.annotation.SuppressLint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
+import com.example.myapplication.navigation.BottomNavigationBox
+import com.example.myapplication.navigation.Screen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -12,18 +36,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -32,20 +49,34 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.example.myapplication.frontendPart.Item
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.ElementData.ElementData
 import com.example.myapplication.R
 import com.example.myapplication.frontendPart.DataRepository
-import com.example.myapplication.screen.screenExtenderdata
+
+
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+fun MainScreen() {
+    val navController = rememberNavController()
+    Scaffold(
+        bottomBar = { BottomNavigationBox(navController = navController) }
+    ) {
+        NavHost(navController = navController, startDestination = Screen.Main.route) {
+            composable(Screen.Main.route) { MyApp() }
+            composable(Screen.Favourite.route) { FavouriteScreen() }
+            composable(Screen.Cart.route) { CartScreen() }
+        }
+    }
+}
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MyApp(modifier: Modifier, screenState : screenExtenderdata) {
+fun MyApp() {
     val cultSectionData = listOf(
         ElementData(
             imageFileName = "2.jpg",
@@ -103,29 +134,6 @@ fun MyApp(modifier: Modifier, screenState : screenExtenderdata) {
                 ScrollElement("Выбор Редакции", cultSectionData)
                 ScrollElement("Невероятно культовое", cultSectionData)
             }
-        }
-    }
-}
-
-
-
-@Composable
-fun BottomNavigationBar() {
-    // Пример простой навигации
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Gray),
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        TextButton(onClick = { /* Навигация на главный экран */ }) {
-            Text(text = "Главная", color = Color.White)
-        }
-        TextButton(onClick = { /* Навигация на поиск */ }) {
-            Text(text = "Поиск", color = Color.White)
-        }
-        TextButton(onClick = { /* Навигация на профиль */ }) {
-            Text(text = "Профиль", color = Color.White)
         }
     }
 }
@@ -290,7 +298,7 @@ fun ScrollElement(sectionTitle: String, elements: List<ElementData>) {
         ) {
             elements.forEach()
             {
-                element->ProductBox(element)
+                    element->ProductBox(element)
             }
         }
     }
@@ -467,7 +475,6 @@ fun ItemsList(items: List<Item>, navController: NavController) {
         }
     }
 }
-//
 
 @Composable
 fun ItemRow(item: Item, onClick: () -> Unit) {

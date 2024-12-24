@@ -82,8 +82,6 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                 FilterAndSearch()
             }
             item {
-
-//                ScrollElement("Культовое", cultSectionData, false, "")
                 ScrollElement("Культовое", cultData, isLoadingCult, errorMessage, {viewModel.fetchCultData()})
                 ScrollElement("Выбор Редакции", editorChoiceData, isLoadingEditorChoice, errorMessage, {viewModel.fetchEditorChoiceData()})
                 ScrollElement("Невероятно культовое", incredibleCultData, isLoadingIncredibleCult, errorMessage, {viewModel.fetchIncredibleCultData()})
@@ -228,13 +226,12 @@ fun ScrollElement(
 ) {
     val listState = rememberLazyListState()
 
-    // **Detect Scrolling to the End**
+    // Проверка на загрузку доп. контента при прокрутке
     val shouldLoadMore = remember {
         derivedStateOf {
             val layoutInfo = listState.layoutInfo
             val totalItemsCount = layoutInfo.totalItemsCount
             val visibleItems = layoutInfo.visibleItemsInfo
-            // Start loading more when the last visible item is within 3 items of the end
             if (visibleItems.isNotEmpty()) {
                 val lastVisibleItemIndex = visibleItems.last().index
                 lastVisibleItemIndex >= totalItemsCount - 3
@@ -255,7 +252,6 @@ fun ScrollElement(
             .background(Color(0xFF2C2C2C))
             .fillMaxSize()
     ) {
-        // **Section Header**
         Box(
             modifier = Modifier
                 .padding(bottom = 8.dp)
@@ -286,15 +282,13 @@ fun ScrollElement(
             data.isNotEmpty() -> {
                 Box {
                     LazyRow(
-                        state = listState, // **Pass listState here**
+                        state = listState,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp)
                     ) {
                         items(data) { element ->
                             ProductBox(element)
                         }
-
-                        // **Optional Loading Indicator at the End**
                         if (isLoading) {
                             item {
                                 Box(
@@ -333,8 +327,6 @@ fun ScrollElement(
         }
     }
 }
-
-
 
 @Composable
 fun SkeletonElement() {
@@ -383,6 +375,7 @@ fun ProductBox(elementData: ElementData) {
                     .align(Alignment.Center)
                     .clip(RoundedCornerShape(15))
                     .background(Color.White),
+//                    .clickable{ navController.navigate("detail_screen")},
                 contentScale = ContentScale.Crop // Масштабирование изображения
             )
             Box(

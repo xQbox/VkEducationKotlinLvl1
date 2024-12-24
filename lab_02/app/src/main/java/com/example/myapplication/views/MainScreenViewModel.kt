@@ -1,5 +1,8 @@
 package com.example.myapplication.views
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.ElementData.ElementData
@@ -11,6 +14,14 @@ import kotlinx.coroutines.launch
 
 
 class MainScreenViewModel : ViewModel() {
+
+    private val _description = MutableStateFlow<String?>(null)
+    val description: StateFlow<String?> = _description.asStateFlow()
+    private val _isLoadingDesc = MutableStateFlow(true)
+    val isLoadingDesc = _isLoadingDesc.asStateFlow()
+
+    var selectedImageDetail by mutableStateOf<ElementData?>(null)
+        private set
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
@@ -39,8 +50,6 @@ class MainScreenViewModel : ViewModel() {
 
     private var incredibleChoicePage = 0
     private val incredibleChoiceTotalPage = 3
-
-
 
 
     init {
@@ -101,7 +110,7 @@ class MainScreenViewModel : ViewModel() {
                 _errorMessage.value = null
                 ++cultPage
             } catch (e: Exception) {
-                _errorMessage.value = e.message
+                _errorMessage.value = e.message // TODO(Сделать для каждого fetch отдельную переменную с сообщением об ошибках)
             } finally {
                 _isLoadingCult.value = false
             }
@@ -151,5 +160,25 @@ class MainScreenViewModel : ViewModel() {
             }
         }
     }
+    
+    fun fetchDescription(elementData: ElementData) {
+        viewModelScope.launch {
+            _isLoadingDesc.value = true
+            try {
+                // TODO() Логика -> Запрос на сервер вместе с текущими деталями изображения
+                // Получение описания для конкретной картинки
+                val newDescription = elementData.genre + "Описание каждой конкретной фотографии"
+                _description.value = newDescription
+            } catch (e: Exception) {
+                _errorMessage.value = e.message
+            } finally {
+                _isLoadingDesc.value = false
+            }
+        }
+    }
 
+
+    fun selectImageDetail(detail: ElementData) {
+        selectedImageDetail = detail
+    }
 }

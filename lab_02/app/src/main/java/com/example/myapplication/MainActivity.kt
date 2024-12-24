@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.navigation.BottomNavigationBox
 import com.example.myapplication.navigation.Screen
 import com.example.myapplication.screen.CartScreen
+import com.example.myapplication.screen.DetailScreen
 import com.example.myapplication.screen.FavouriteScreen
 import com.example.myapplication.screen.MainScreen
 import com.example.myapplication.ui.theme.MyApplicationTheme
@@ -33,8 +34,8 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Main.route) { MainScreen() }
                         composable(Screen.Favourite.route){ FavouriteScreen() }
                         composable(Screen.Cart.route) { CartScreen() }
-//                        composable(route = "details/{}"){  }
-                        }
+                        composable(Screen.DetailScreen.route){ DetailScreen(MainScreenViewModel()) } // TODO(УЗКОЕ МЕСТО!!!)
+                    }
                 }
             }
         }

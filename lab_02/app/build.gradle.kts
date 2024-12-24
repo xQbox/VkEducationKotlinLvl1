@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.compose.material)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.foundation.layout.android)
 
     testImplementation(libs.junit)
 

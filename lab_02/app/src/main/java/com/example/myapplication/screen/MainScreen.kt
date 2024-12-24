@@ -49,34 +49,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.wear.compose.material.ExperimentalWearMaterialApi
+import androidx.wear.compose.material3.placeholder
 import com.example.myapplication.frontendPart.Item
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.ElementData.ElementData
 import com.example.myapplication.R
 import com.example.myapplication.frontendPart.DataRepository
+import com.example.myapplication.views.MainScreenViewModel
 
 
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-    Scaffold(
-        bottomBar = { BottomNavigationBox(navController = navController) }
-    ) {
-        NavHost(navController = navController, startDestination = Screen.Main.route) {
-            composable(Screen.Main.route) { MyApp() }
-            composable(Screen.Favourite.route) { FavouriteScreen() }
-            composable(Screen.Cart.route) { CartScreen() }
-        }
-    }
-}
+fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
+    val cultData by viewModel.cultData.collectAsState()
+    val isLoadingCult by viewModel.isLoadingCult.collectAsState()
+    val editorChoiceData by viewModel.editorChoiceData.collectAsState()
+    val isLoadingEditorChoice by viewModel.isLoadingEditorChoice.collectAsState()
+    val incredibleCultData by viewModel.incredibleCultData.collectAsState()
+    val isLoadingIncredibleCult by viewModel.isLoadingIncredibleCult.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
 
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun MyApp() {
     val cultSectionData = listOf(
         ElementData(
             imageFileName = "2.jpg",
@@ -115,7 +110,6 @@ fun MyApp() {
         )
     )
 
-
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -130,9 +124,11 @@ fun MyApp() {
                 FilterAndSearch()
             }
             item {
-                ScrollElement("Культовое", cultSectionData)
-                ScrollElement("Выбор Редакции", cultSectionData)
-                ScrollElement("Невероятно культовое", cultSectionData)
+
+//                ScrollElement("Культовое", cultSectionData, false, "")
+                ScrollElement("Культовое", cultData, isLoadingCult, errorMessage)
+//                ScrollElement("Выбор Редакции", editorChoiceData, isLoadingEditorChoice, errorMessage)
+//                ScrollElement("Невероятно культовое", incredibleCultData, isLoadingIncredibleCult, errorMessage)
             }
         }
     }
@@ -266,11 +262,16 @@ fun FilterAndSearch() {
 }
 
 @Composable
-fun ScrollElement(sectionTitle: String, elements: List<ElementData>) {
+fun ScrollElement(
+    sectionTitle: String,
+    data: List<ElementData>,
+    isLoading: Boolean,
+    errorMessage: String?
+) {
     Column(
         modifier = Modifier
             .background(Color(0xFF2C2C2C))
-            .fillMaxSize(),
+            .fillMaxSize()
     ) {
         // catalogHeader
         Box(
@@ -290,18 +291,58 @@ fun ScrollElement(sectionTitle: String, elements: List<ElementData>) {
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()), // Добавляем горизонтальную прокрутку
-            horizontalArrangement = Arrangement.spacedBy(8.dp) // Расстояние между элементами
-        ) {
-            elements.forEach()
-            {
-                    element->ProductBox(element)
+
+        when {
+            isLoading -> {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(3) {
+                        SkeletonElement()
+                    }
+                }
+            }
+            errorMessage != null -> {
+                Text(
+                    text = "Ошибка: $errorMessage",
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            data.isNotEmpty() -> {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    data.forEach { element ->
+                        ProductBox(element)
+                    }
+                }
+            }
+            else -> {
+                Text(
+                    text = "Данных нет",
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
     }
+}
+
+@Composable
+fun SkeletonElement() {
+    Box(
+        modifier = Modifier
+            .width(150.dp)
+            .height(200.dp)
+            .padding(8.dp)
+            .placeholder(
+                color = Color.LightGray,
+                placeholderState = TODO(),
+                shape = TODO()
+            )
+    )
 }
 
 @Composable
@@ -324,8 +365,8 @@ fun ProductBox(elementData: ElementData) {
                     onClick = {
                         // Логика нажатия
                     },
-                    indication = rememberRipple(bounded = false),
-                    interactionSource = remember { MutableInteractionSource() }
+//                    indication = rememberRipple(bounded = false),
+//                    interactionSource = remember { MutableInteractionSource() }
                 )
         ) {
             Image(
@@ -348,8 +389,8 @@ fun ProductBox(elementData: ElementData) {
                         onClick = {
                             // Логика добавления в корзину
                         },
-                        indication = rememberRipple(bounded = false),
-                        interactionSource = remember { MutableInteractionSource() }
+//                        indication = rememberRipple(bounded = false),
+//                        interactionSource = remember { MutableInteractionSource() }
                     )
             ) {
                 Image(

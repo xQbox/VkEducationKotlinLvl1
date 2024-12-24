@@ -6,11 +6,11 @@ plugins {
 
 android {
     namespace = "com.example.myapplication"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.myapplication"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -54,7 +54,9 @@ dependencies {
     implementation(libs.androidx.compose.material) // Подключение Material 2 для BottomNavigation
     implementation(libs.androidx.material3) // Material 3 для современных компонентов
     implementation(libs.androidx.navigation.compose) // Для Jetpack Navigation
-    implementation(libs.coil.compose) // Для работы с изображениями
+    implementation(libs.coil.compose)
+    implementation(libs.compose.material)
+    implementation(libs.androidx.compose.material3) // Для работы с изображениями
 
     testImplementation(libs.junit)
 

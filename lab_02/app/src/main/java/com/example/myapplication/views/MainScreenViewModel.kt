@@ -30,8 +30,23 @@ class MainScreenViewModel : ViewModel() {
     private val _isLoadingIncredibleCult = MutableStateFlow(true)
     val isLoadingIncredibleCult: StateFlow<Boolean> = _isLoadingIncredibleCult.asStateFlow()
 
+    private var cultPage = 0
+    private val pageSize = 10
+    private val cultTotalPages = 5
+
+    private var editorChoicePage = 0
+    private val editorChoiceTotalPages = 7
+
+    private var incredibleChoicePage = 0
+    private val incredibleChoiceTotalPage = 3
+
+
+
+
     init {
         fetchCultData()
+        fetchEditorChoiceData()
+        fetchIncredibleCultData()
     }
 
     val cultSectionData = listOf(
@@ -72,14 +87,19 @@ class MainScreenViewModel : ViewModel() {
         )
     )
 
-    private fun fetchCultData() {
-        viewModelScope.launch {
+     fun fetchCultData() {
+         if (cultPage >= cultTotalPages) return
+
+         viewModelScope.launch {
             _isLoadingCult.value = true
-            delay(500)
+            delay(1000)
             try {
 //                val data = listOf<ElementData>()
-                val data = cultSectionData
-                _cultData.value = data
+//                for (i in 0..cultSectionData.size) TODO(рандомный элементы)
+                val newData = cultSectionData
+                _cultData.value = newData + _cultData.value
+                _errorMessage.value = null
+                ++cultPage
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             } finally {
@@ -87,13 +107,24 @@ class MainScreenViewModel : ViewModel() {
             }
         }
     }
-    private fun fetchEditorChoiceData() {
+
+    private fun getCultPageData(page: Int): List<ElementData> {
+        val fromIndex = page * pageSize
+        val toIndex = minOf(fromIndex + pageSize, cultSectionData.size)
+        if (fromIndex >= cultSectionData.size) return emptyList()
+        return cultSectionData.subList(fromIndex, toIndex)
+    }
+
+    fun fetchEditorChoiceData() {
+        if (editorChoicePage >= editorChoiceTotalPages) return
         viewModelScope.launch {
             _isLoadingEditorChoice.value = true
-            delay(600)
+            delay(500)
             try {
-                val data = cultSectionData
-                _editorChoiceData.value = data
+                val newData = cultSectionData
+                _editorChoiceData.value = newData + _editorChoiceData.value
+                _errorMessage.value = null
+                ++editorChoicePage
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             } finally {
@@ -101,13 +132,18 @@ class MainScreenViewModel : ViewModel() {
             }
         }
     }
-    private fun fetchIncredibleCultData() {
+
+    fun fetchIncredibleCultData() {
+        if (incredibleChoicePage >= incredibleChoiceTotalPage) return
+
         viewModelScope.launch {
             _isLoadingIncredibleCult.value = true
-            delay(700)
+            delay(2000)
             try {
-                val data = cultSectionData
-                _incredibleCultData.value = data
+                val newData = cultSectionData
+                _incredibleCultData.value = newData + _incredibleCultData.value
+                _errorMessage.value = null
+                ++incredibleChoicePage
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             } finally {

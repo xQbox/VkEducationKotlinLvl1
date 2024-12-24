@@ -1,6 +1,9 @@
 package com.example.myapplication.screen
 
+
 import android.annotation.SuppressLint
+import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,20 +19,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.navigation.BottomNavigationBox
-import com.example.myapplication.navigation.Screen
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.rememberScrollState
@@ -37,7 +33,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import androidx.compose.ui.draw.clip
@@ -52,7 +47,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
-import androidx.wear.compose.material3.placeholder
 import com.example.myapplication.frontendPart.Item
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -60,6 +54,7 @@ import com.example.myapplication.ElementData.ElementData
 import com.example.myapplication.R
 import com.example.myapplication.frontendPart.DataRepository
 import com.example.myapplication.views.MainScreenViewModel
+import com.google.accompanist.placeholder.PlaceholderHighlight
 
 
 @Composable
@@ -72,43 +67,6 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
     val isLoadingIncredibleCult by viewModel.isLoadingIncredibleCult.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
-    val cultSectionData = listOf(
-        ElementData(
-            imageFileName = "2.jpg",
-            artistName = "Pink Floyd",
-            price = 19.99,
-            genre = "Progressive Rock",
-            quantityInStock = 10
-        ),
-        ElementData(
-            imageFileName = "3.png",
-            artistName = "The Beatles",
-            price = 22.50,
-            genre = "Rock",
-            quantityInStock = 8
-        ),
-        ElementData(
-            imageFileName = "4.jpg",
-            artistName = "Michael Jackson",
-            price = 18.99,
-            genre = "Pop",
-            quantityInStock = 12
-        ),
-        ElementData(
-            imageFileName = "5.jpg",
-            artistName = "Nirvana",
-            price = 20.00,
-            genre = "Grunge",
-            quantityInStock = 15
-        ),
-        ElementData(
-            imageFileName = "6.jpg",
-            artistName = "AC/DC",
-            price = 21.99,
-            genre = "Hard Rock",
-            quantityInStock = 5
-        )
-    )
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -126,9 +84,9 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
             item {
 
 //                ScrollElement("Культовое", cultSectionData, false, "")
-                ScrollElement("Культовое", cultData, isLoadingCult, errorMessage)
-//                ScrollElement("Выбор Редакции", editorChoiceData, isLoadingEditorChoice, errorMessage)
-//                ScrollElement("Невероятно культовое", incredibleCultData, isLoadingIncredibleCult, errorMessage)
+                ScrollElement("Культовое", cultData, isLoadingCult, errorMessage, {viewModel.fetchCultData()})
+                ScrollElement("Выбор Редакции", editorChoiceData, isLoadingEditorChoice, errorMessage, {viewModel.fetchEditorChoiceData()})
+                ScrollElement("Невероятно культовое", incredibleCultData, isLoadingIncredibleCult, errorMessage, {viewModel.fetchIncredibleCultData()})
             }
         }
     }
@@ -260,20 +218,44 @@ fun FilterAndSearch() {
         )
     }
 }
-
 @Composable
 fun ScrollElement(
     sectionTitle: String,
     data: List<ElementData>,
     isLoading: Boolean,
-    errorMessage: String?
+    errorMessage: String?,
+    onLoadMore: () -> Unit,
 ) {
+    val listState = rememberLazyListState()
+
+    // **Detect Scrolling to the End**
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val totalItemsCount = layoutInfo.totalItemsCount
+            val visibleItems = layoutInfo.visibleItemsInfo
+            // Start loading more when the last visible item is within 3 items of the end
+            if (visibleItems.isNotEmpty()) {
+                val lastVisibleItemIndex = visibleItems.last().index
+                lastVisibleItemIndex >= totalItemsCount - 3
+            } else {
+                false
+            }
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore.value) {
+        if (shouldLoadMore.value && !isLoading && errorMessage == null) {
+            onLoadMore()
+        }
+    }
+
     Column(
         modifier = Modifier
             .background(Color(0xFF2C2C2C))
             .fillMaxSize()
     ) {
-        // catalogHeader
+        // **Section Header**
         Box(
             modifier = Modifier
                 .padding(bottom = 8.dp)
@@ -293,56 +275,80 @@ fun ScrollElement(
         }
 
         when {
+            errorMessage != null -> {
+                Text(
+                    text = "Ошибка: $errorMessage",
+                    modifier = Modifier.padding(16.dp),
+                    color = Color.White
+                )
+            }
+
+            data.isNotEmpty() -> {
+                Box {
+                    LazyRow(
+                        state = listState, // **Pass listState here**
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp)
+                    ) {
+                        items(data) { element ->
+                            ProductBox(element)
+                        }
+
+                        // **Optional Loading Indicator at the End**
+                        if (isLoading) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 150.dp, height = 200.dp)
+                                        .padding(4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             isLoading -> {
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    state = listState,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
-                    items(3) {
+                    items(15) {
                         SkeletonElement()
                     }
                 }
             }
-            errorMessage != null -> {
-                Text(
-                    text = "Ошибка: $errorMessage",
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-            data.isNotEmpty() -> {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    data.forEach { element ->
-                        ProductBox(element)
-                    }
-                }
-            }
+
             else -> {
                 Text(
                     text = "Данных нет",
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
+                    color = Color.White
                 )
             }
         }
     }
 }
 
+
+
 @Composable
 fun SkeletonElement() {
-    Box(
+    Column(
         modifier = Modifier
-            .width(150.dp)
+            .width(180.dp)
             .height(200.dp)
-            .padding(8.dp)
             .placeholder(
+                visible = true,
+                highlight = PlaceholderHighlight.shimmer(),
                 color = Color.LightGray,
-                placeholderState = TODO(),
-                shape = TODO()
+                shape = RoundedCornerShape(16.dp)
             )
-    )
+    ) {}
 }
 
 @Composable

@@ -45,6 +45,9 @@ android {
 dependencies {
     implementation(platform(libs.androidx.compose.bom)) // BOM для синхронизации версий Compose
     implementation(platform("androidx.compose:compose-bom:1.4.0"))
+    implementation("com.google.accompanist:accompanist-placeholder-material:0.30.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.30.1")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -52,11 +55,11 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.compose.material) // Подключение Material 2 для BottomNavigation
-    implementation(libs.androidx.material3) // Material 3 для современных компонентов
-    implementation(libs.androidx.navigation.compose) // Для Jetpack Navigation
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.compose.material)
-    implementation(libs.androidx.compose.material3) // Для работы с изображениями
+    implementation(libs.androidx.compose.material3)
 
     testImplementation(libs.junit)
 

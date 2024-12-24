@@ -103,6 +103,8 @@ class MainScreenViewModel : ViewModel() {
             _isLoadingCult.value = true
             delay(1000)
             try {
+                // TODO() Логика -> Запрос на сервер вместе с текущими деталями изображения
+                // Получение описания для конкретной картинки
 //                val data = listOf<ElementData>()
 //                for (i in 0..cultSectionData.size) TODO(рандомный элементы)
                 val newData = cultSectionData
@@ -130,6 +132,8 @@ class MainScreenViewModel : ViewModel() {
             _isLoadingEditorChoice.value = true
             delay(500)
             try {
+                // TODO() Логика -> Запрос на сервер вместе с текущими деталями изображения
+                // Получение описания для конкретной картинки
                 val newData = cultSectionData
                 _editorChoiceData.value = newData + _editorChoiceData.value
                 _errorMessage.value = null
@@ -149,6 +153,8 @@ class MainScreenViewModel : ViewModel() {
             _isLoadingIncredibleCult.value = true
             delay(2000)
             try {
+                // TODO() Логика -> Запрос на сервер вместе с текущими деталями изображения
+                // Получение описания для конкретной картинки
                 val newData = cultSectionData
                 _incredibleCultData.value = newData + _incredibleCultData.value
                 _errorMessage.value = null

@@ -47,18 +47,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
-import com.example.myapplication.frontendPart.Item
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import com.example.myapplication.ElementData.ElementData
+import com.example.myapplication.data.ElementData
 import com.example.myapplication.R
-import com.example.myapplication.frontendPart.DataRepository
 import com.example.myapplication.views.MainScreenViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
 
 
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
+fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = viewModel()) {
     val cultData by viewModel.cultData.collectAsState()
     val isLoadingCult by viewModel.isLoadingCult.collectAsState()
     val editorChoiceData by viewModel.editorChoiceData.collectAsState()
@@ -82,9 +80,9 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                 FilterAndSearch()
             }
             item {
-                ScrollElement("Культовое", cultData, isLoadingCult, errorMessage, {viewModel.fetchCultData()})
-                ScrollElement("Выбор Редакции", editorChoiceData, isLoadingEditorChoice, errorMessage, {viewModel.fetchEditorChoiceData()})
-                ScrollElement("Невероятно культовое", incredibleCultData, isLoadingIncredibleCult, errorMessage, {viewModel.fetchIncredibleCultData()})
+                ScrollElement("Культовое", cultData, isLoadingCult, errorMessage, {viewModel.fetchCultData()}, navController)
+                ScrollElement("Выбор Редакции", editorChoiceData, isLoadingEditorChoice, errorMessage, {viewModel.fetchEditorChoiceData()}, navController)
+                ScrollElement("Невероятно культовое", incredibleCultData, isLoadingIncredibleCult, errorMessage, {viewModel.fetchIncredibleCultData()}, navController)
             }
         }
     }
@@ -223,6 +221,7 @@ fun ScrollElement(
     isLoading: Boolean,
     errorMessage: String?,
     onLoadMore: () -> Unit,
+    navController: NavController,
 ) {
     val listState = rememberLazyListState()
 
@@ -287,7 +286,7 @@ fun ScrollElement(
                         contentPadding = PaddingValues(horizontal = 16.dp)
                     ) {
                         items(data) { element ->
-                            ProductBox(element)
+                            ProductBox(navController, element)
                         }
                         if (isLoading) {
                             item {
@@ -344,7 +343,7 @@ fun SkeletonElement() {
 }
 
 @Composable
-fun ProductBox(elementData: ElementData) {
+fun ProductBox(navController: NavController, elementData: ElementData) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val buttonSize = if (screenWidth < 600.dp) 30.dp else 40.dp
@@ -374,8 +373,12 @@ fun ProductBox(elementData: ElementData) {
                     .fillMaxSize(0.93f)
                     .align(Alignment.Center)
                     .clip(RoundedCornerShape(15))
-                    .background(Color.White),
-//                    .clickable{ navController.navigate("detail_screen")},
+                    .background(Color.White)
+                    .clickable {
+                        navController.navigate(
+                        "detail_screen/$imageName/$artistName/$price/$genre/$stockCount"
+                        )
+                    },
                 contentScale = ContentScale.Crop // Масштабирование изображения
             )
             Box(
@@ -459,84 +462,6 @@ fun ProductBox(elementData: ElementData) {
     }
 }
 
-
-
-data class Album(val title: String, val genre: String, val price: Int, val stock: Int)
-
-
-@Composable
-fun ItemsListScreen(navController: NavController) {
-    val context = LocalContext.current
-
-    // Состояние списка элементов
-    var items by remember { mutableStateOf<List<Item>?>(null) }
-    // Состояние загрузки
-    var isLoading by remember { mutableStateOf(true) }
-
-    // Эффект, который запускается при первом отображении
-    LaunchedEffect(Unit) {
-        // Получаем данные из репозитория с задержкой
-        val data = DataRepository.getItems(context)
-        items = data
-        isLoading = false
-    }
-
-    // Отображаем индикатор загрузки или список элементов
-    if (isLoading) {
-        LoadingIndicator()
-    } else {
-        items?.let {
-            ItemsList(it, navController)
-        }
-    }
-}
-//// Функция описывает
-@Composable
-fun LoadingIndicator() {
-    // Центрируем индикатор загрузки на экране
-    Box(modifier = Modifier.fillMaxSize()) {
-        CircularProgressIndicator(
-            modifier = Modifier.align(Alignment.Center)
-        )
-    }
-}
-
-//
-@Composable
-fun ItemsList(items: List<Item>, navController: NavController) {
-    // Отображаем список с элементами
-    LazyColumn {
-        items(items) { item ->
-            ItemRow(item = item, onClick = {
-                // Переходим на экран деталей элемента
-                navController.navigate("item_details/${item.id}")
-            })
-            Divider()
-        }
-    }
-}
-
-@Composable
-fun ItemRow(item: Item, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(16.dp)
-    ) {
-        // Используем AsyncImage для отображения изображения из файла
-        AsyncImage(
-            model = item.imagePath,
-            contentDescription = item.name,
-            modifier = Modifier.size(64.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-            Text(text = item.description, style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
 
 @Composable
 fun AssetImagePainter(imageFileName: String): Painter {

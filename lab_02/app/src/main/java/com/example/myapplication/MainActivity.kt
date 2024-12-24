@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.navigation.AppNavigation
 import com.example.myapplication.navigation.BottomNavigationBox
 import com.example.myapplication.navigation.Screen
 import com.example.myapplication.screen.CartScreen
@@ -30,12 +31,7 @@ class MainActivity : ComponentActivity() {
                     bottomBar = { BottomNavigationBox(navController = navController) }
                 )
                 {
-                    NavHost(navController = navController, startDestination = Screen.Main.route) {
-                        composable(Screen.Main.route) { MainScreen() }
-                        composable(Screen.Favourite.route){ FavouriteScreen() }
-                        composable(Screen.Cart.route) { CartScreen() }
-                        composable(Screen.DetailScreen.route){ DetailScreen(MainScreenViewModel()) } // TODO(УЗКОЕ МЕСТО!!!)
-                    }
+                    AppNavigation(navController)
                 }
             }
         }

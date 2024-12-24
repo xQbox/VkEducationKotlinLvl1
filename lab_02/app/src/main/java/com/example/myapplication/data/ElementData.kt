@@ -1,4 +1,4 @@
-package com.example.myapplication.ElementData
+package com.example.myapplication.data
 
 data class ElementData(
     val imageFileName: String,        // Имя файла изображения

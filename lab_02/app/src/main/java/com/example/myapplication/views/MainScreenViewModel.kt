@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.ElementData.ElementData
+import com.example.myapplication.data.ElementData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -160,7 +160,7 @@ class MainScreenViewModel : ViewModel() {
             }
         }
     }
-    
+
     fun fetchDescription(elementData: ElementData) {
         viewModelScope.launch {
             _isLoadingDesc.value = true
